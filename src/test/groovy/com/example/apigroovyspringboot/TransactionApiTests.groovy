@@ -148,4 +148,33 @@ class TransactionApiTests {
         assertThat(responseEntity.body.amount).is(amount)
     }
 
+    @Test
+    void testAddTransactionEmptyAccount() {
+
+        BigDecimal amount = 50
+
+        Transaction transaction = new Transaction(operationType: operationTypes.pagamento, amount: amount)
+
+        ResponseEntity responseEntity = this.restTemplate.postForEntity("/transactions", transaction, Map.class)
+
+        assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+
+        assertThat(responseEntity.body).isNotNull()
+    }
+
+    @Test
+    void testAddTransactionEmptyOperationType() {
+
+        BigDecimal amount = 50
+
+        Transaction transaction = new Transaction(account: account, amount: amount)
+
+        ResponseEntity responseEntity = this.restTemplate.postForEntity("/transactions", transaction, Map.class)
+
+        assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+
+        assertThat(responseEntity.body).isNotNull()
+
+    }
+
 }

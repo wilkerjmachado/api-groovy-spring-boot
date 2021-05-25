@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.annotation.CreatedDate
 
 import javax.persistence.*
+import javax.validation.constraints.NotBlank
 
 @Entity
 class Transaction extends AbstractEntity{
@@ -21,7 +22,7 @@ class Transaction extends AbstractEntity{
     BigDecimal amount
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "event_date", nullable = false, updatable = false)
     Date eventDate
 
     @PrePersist
