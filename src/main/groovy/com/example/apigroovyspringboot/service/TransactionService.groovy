@@ -44,7 +44,37 @@ class TransactionService extends BaseService<Transaction>{
 
         entity.amount = entity.amount * entity.operationType.value
 
+        this.updateBalanceTransactions(entity)
+
         super.save(entity)
 
+    }
+
+    void updateBalanceTransactions(Transaction transaction) {
+
+        List transactionList = this.repository.findAllByAccount_id(transaction.account.id)
+
+        if(transactionList.isEmpty() || transaction.operationType.isWithdraw()){
+
+            transaction.balance = transaction.amount
+
+        }else{
+
+            BigDecimal currentBalance = transaction.amount
+
+            transactionList.each {
+
+                if(currentBalance > 0) {
+
+                    currentBalance = currentBalance.subtract(it.balance < 0 ? it.balance * -1 : it.balance)
+
+                    it.balance = currentBalance
+                }
+            }
+
+            this.repository.saveAll(transactionList)
+
+            transaction.balance = currentBalance < 0 ? 0 : currentBalance
+        }
     }
 }

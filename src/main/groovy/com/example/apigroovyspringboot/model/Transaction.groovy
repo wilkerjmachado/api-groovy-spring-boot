@@ -21,6 +21,9 @@ class Transaction extends AbstractEntity{
     @Column(nullable = false)
     BigDecimal amount
 
+    @Column(nullable = false)
+    BigDecimal balance
+
     @CreatedDate
     @Column(name = "event_date", nullable = false, updatable = false)
     Date eventDate
