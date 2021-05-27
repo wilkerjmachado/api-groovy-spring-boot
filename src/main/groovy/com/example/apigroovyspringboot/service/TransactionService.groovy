@@ -1,11 +1,13 @@
 package com.example.apigroovyspringboot.service
 
 import com.example.apigroovyspringboot.exception.NotFoundException
+import com.example.apigroovyspringboot.model.Account
 import com.example.apigroovyspringboot.model.OperationType
 import com.example.apigroovyspringboot.model.Transaction
 import com.example.apigroovyspringboot.repository.TransactionRepository
 import com.example.apigroovyspringboot.util.ThrowUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,27 +24,27 @@ class TransactionService extends BaseService<Transaction>{
     AccountService accountService
 
     @Override
-    @Transactional
-    Transaction save(Transaction entity) {
-
-        OperationType operationType = operationTypeService.findById(entity.operationType.id)
-
-        entity.amount = entity.amount * operationType.value
-
-        return super.save(entity)
-    }
-
-    @Override
     void validate(Transaction entity) {
 
         ThrowUtil.serviceExceptionThrow(!entity.operationType.asBoolean(), "Operation type is mandatory")
 
         ThrowUtil.serviceExceptionThrow(!entity.account.asBoolean(), "Account is mandatory")
 
-        this.operationTypeService.findById(entity.operationType?.id)
-
-        this.accountService.findById(entity.account?.id)
-
         super.validate(entity)
+    }
+
+    @Transactional
+    Transaction processTransaction(Transaction entity) {
+
+        Account account = this.accountService.findById(entity.account.id)
+
+        entity.operationType = this.operationTypeService.findById(entity.operationType.id)
+
+        this.accountService.sensitizesLimit(account, entity)
+
+        entity.amount = entity.amount * entity.operationType.value
+
+        super.save(entity)
+
     }
 }

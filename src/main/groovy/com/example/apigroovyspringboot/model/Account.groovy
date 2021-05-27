@@ -14,6 +14,9 @@ class Account extends AbstractEntity{
     @NotBlank(message = "Document number is mandatory")
     String documentNumber
 
+    @JsonProperty("available_credit_limit")
+    BigDecimal availableCreditLimit
+
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], mappedBy = "account")
     List<Transaction> transactions

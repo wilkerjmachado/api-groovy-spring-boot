@@ -11,4 +11,9 @@ class OperationType extends AbstractEntity{
 
     @Column(length = 1, nullable = false)
     int value
+
+    boolean isWithdraw(){
+
+        this.value < 0
+    }
 }
