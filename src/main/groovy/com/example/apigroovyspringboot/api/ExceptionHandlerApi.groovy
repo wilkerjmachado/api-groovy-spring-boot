@@ -1,5 +1,6 @@
 package com.example.apigroovyspringboot.api
 
+import com.example.apigroovyspringboot.exception.AccountLimitException
 import com.example.apigroovyspringboot.exception.ErrorInfo
 import groovy.json.JsonOutput
 import groovy.util.logging.Slf4j
@@ -46,6 +47,14 @@ class ExceptionHandlerApi{
         })
 
         new ErrorInfo(url: req.requestURL.toString(), errorCode: HttpStatus.BAD_REQUEST.value(), message: ex.message, errors: errors)
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AccountLimitException.class)
+    @ResponseBody
+    ErrorInfo handleAccountLimitBadRequest(HttpServletRequest req, Exception ex) {
+
+        new ErrorInfo(url: req.requestURL.toString(), errorCode: HttpStatus.BAD_REQUEST.value(), message: ex.message)
     }
 
 }
